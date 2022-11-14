@@ -4,6 +4,23 @@ from random import *
 import json
 
 
+# ---------------------------- SEARCH WEBSITE ------------------------------- #
+def search_password():
+    try:
+        with open('data.json') as data_file:
+            data = json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showerror(title='Error', message='No data File found')
+    else:
+        if website_input.get() in data:
+            email = data[website_input.get()]['Email']
+            password = data[website_input.get()]['Password']
+            messagebox.showinfo(title=f'{website_input.get()}', message=f'Email: {email} \n'
+                                                                        f'Password: {password}')
+        else:
+            messagebox.showerror(title='Error', message=f'No details for {website_input.get()} exists.')
+
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
     password_input.delete(0, END)
@@ -34,8 +51,8 @@ def save_info():
 
     new_data = {
         website_input.get(): {
-            'Password': password_input.get(),
-            'Email': email_input.get()
+            'Email': email_input.get(),
+            'Password': password_input.get()
         }
     }
 
@@ -70,8 +87,8 @@ canvas.grid(column=1, row=0)
 # form config
 website_label = Label(text='Website: ')
 website_label.grid(column=0, row=1)
-website_input = Entry(width=35)
-website_input.grid(column=1, row=1, columnspan=2)
+website_input = Entry(width=21)
+website_input.grid(column=1, row=1)
 
 email_label = Label(text='Email/Username: ')
 email_label.grid(column=0, row=2)
@@ -83,6 +100,8 @@ password_label.grid(column=0, row=3)
 password_input = Entry(width=21)
 password_input.grid(column=1, row=3)
 
+search_button = Button(bg='#ffffff', text='Search', width=14, command=search_password)
+search_button.grid(column=2, row=1)
 generate_button = Button(bg='#ffffff', text='Generate Password', width=14, command=generate_password)
 generate_button.grid(column=2, row=3)
 add_button = Button(bg='#ffffff', text='Add', width=35, command=save_info)
