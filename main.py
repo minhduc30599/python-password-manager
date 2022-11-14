@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from random import *
-import pyperclip
+import json
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
@@ -23,17 +23,33 @@ def generate_password():
 
     password = "".join(password_list)
     password_input.insert(0, password)
-    pyperclip.copy(password)
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_info():
-    with open('data.txt', 'a') as data:
-        messagebox.askquestion(title=website_input.get(), message=f'These are the details entered: '
-                                                                  f'\nEmail: {email_input.get()} '
-                                                                  f'\nPassword: {password_input.get()} '
-                                                                  f'\nIs it OK to save ?')
-        data.write(f'{website_input.get()} | {email_input.get()} | {password_input.get()} |')
+    messagebox.askquestion(title=website_input.get(), message=f'These are the details entered: '
+                                                              f'\nEmail: {email_input.get()} '
+                                                              f'\nPassword: {password_input.get()} '
+                                                              f'\nIs it OK to save ?')
+
+    new_data = {
+        website_input.get(): {
+            'Password': password_input.get(),
+            'Email': email_input.get()
+        }
+    }
+
+    try:
+        with open('data.json', 'r') as data_file:
+            data = json.load(data_file)
+    except FileNotFoundError:
+        with open('data.json', 'w') as data_file:
+            json.dump(new_data, data_file, indent=4)
+    else:
+        data.update(new_data)
+        with open('data.json', 'r') as data_file:
+            json.dump(new_data, data_file, indent=4)
+    finally:
         website_input.delete(0, END)
         email_input.delete(0, END)
         password_input.delete(0, END)
